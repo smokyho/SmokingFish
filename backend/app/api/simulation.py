@@ -1,6 +1,6 @@
 """
-模拟相关API路由
-Step2: Zep实体读取与过滤、OASIS模拟准备与运行（全程自动化）
+Simulation-related API routes
+Step 2: Zep entity reading and filtering, OASIS simulation preparation and running (fully automated)
 """
 
 import os
@@ -20,41 +20,41 @@ from ..models.project import ProjectManager
 logger = get_logger('mirofish.api.simulation')
 
 
-# Interview prompt 优化前缀
-# 添加此前缀可以避免Agent调用工具，直接用文本回复
-INTERVIEW_PROMPT_PREFIX = "结合你的人设、所有的过往记忆与行动，不调用任何工具直接用文本回复我："
+# Interview prompt optimization prefix
+# Adding this prefix prevents Agent from calling tools, responding with text only
+INTERVIEW_PROMPT_PREFIX = "Based on your persona, all past memories and actions, respond to me in text without calling any tools: "
 
 
 def optimize_interview_prompt(prompt: str) -> str:
     """
-    优化Interview提问，添加前缀避免Agent调用工具
-    
+    Optimize Interview prompt, add prefix to prevent Agent from calling tools
+
     Args:
-        prompt: 原始提问
-        
+        prompt: Original question
+
     Returns:
-        优化后的提问
+        Optimized question
     """
     if not prompt:
         return prompt
-    # 避免重复添加前缀
+    # Avoid duplicate prefix
     if prompt.startswith(INTERVIEW_PROMPT_PREFIX):
         return prompt
     return f"{INTERVIEW_PROMPT_PREFIX}{prompt}"
 
 
-# ============== 实体读取接口 ==============
+# ============== Entity Reading Interface ==============
 
 @simulation_bp.route('/entities/<graph_id>', methods=['GET'])
 def get_graph_entities(graph_id: str):
     """
-    获取图谱中的所有实体（已过滤）
-    
-    只返回符合预定义实体类型的节点（Labels不只是Entity的节点）
-    
-    Query参数：
-        entity_types: 逗号分隔的实体类型列表（可选，用于进一步过滤）
-        enrich: 是否获取相关边信息（默认true）
+    Get all entities from the graph (filtered)
+
+    Only returns nodes that match predefined entity types (Labels are not just Entity)
+
+    Query parameters:
+        entity_types: Comma-separated list of entity types (optional, for further filtering)
+        enrich: Whether to get related edge information (default true)
     """
     try:
         if not Config.ZEP_API_KEY:
@@ -67,7 +67,7 @@ def get_graph_entities(graph_id: str):
         entity_types = [t.strip() for t in entity_types_str.split(',') if t.strip()] if entity_types_str else None
         enrich = request.args.get('enrich', 'true').lower() == 'true'
         
-        logger.info(f"获取图谱实体: graph_id={graph_id}, entity_types={entity_types}, enrich={enrich}")
+        logger.info(f"Get graph entities: graph_id={graph_id}, entity_types={entity_types}, enrich={enrich}")
         
         reader = ZepEntityReader()
         result = reader.filter_defined_entities(
@@ -82,7 +82,7 @@ def get_graph_entities(graph_id: str):
         })
         
     except Exception as e:
-        logger.error(f"获取图谱实体失败: {str(e)}")
+        logger.error(f"Get graph entities failed: {str(e)}")
         return jsonify({
             "success": False,
             "error": str(e),
@@ -92,7 +92,7 @@ def get_graph_entities(graph_id: str):
 
 @simulation_bp.route('/entities/<graph_id>/<entity_uuid>', methods=['GET'])
 def get_entity_detail(graph_id: str, entity_uuid: str):
-    """获取单个实体的详细信息"""
+    """Get single entity detailed information"""
     try:
         if not Config.ZEP_API_KEY:
             return jsonify({
@@ -115,7 +115,7 @@ def get_entity_detail(graph_id: str, entity_uuid: str):
         })
         
     except Exception as e:
-        logger.error(f"获取实体详情失败: {str(e)}")
+        logger.error(f"Get entity detail failed: {str(e)}")
         return jsonify({
             "success": False,
             "error": str(e),

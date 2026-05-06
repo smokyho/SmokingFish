@@ -4,10 +4,10 @@
     <nav class="navbar">
       <div class="nav-brand" @click="goHome">MIROFISH</div>
       
-      <!-- 中间步骤指示器 -->
+      <!-- Middle step indicator -->
       <div class="nav-center">
         <div class="step-badge">STEP 01</div>
-        <div class="step-name">图谱构建</div>
+        <div class="step-name">{{ $t('process.stepName') }}</div>
       </div>
 
       <div class="nav-status">
@@ -23,13 +23,13 @@
         <div class="panel-header">
           <div class="header-left">
             <span class="header-deco">◆</span>
-            <span class="header-title">实时知识图谱</span>
+            <span class="header-title">{{ $t('process.panelTitle') }}</span>
           </div>
           <div class="header-right">
             <template v-if="graphData">
-              <span class="stat-item">{{ graphData.node_count || graphData.nodes?.length || 0 }} 节点</span>
+              <span class="stat-item">{{ graphData.node_count || graphData.nodes?.length || 0 }} {{ $t('process.nodes') }}</span>
               <span class="stat-divider">|</span>
-              <span class="stat-item">{{ graphData.edge_count || graphData.edges?.length || 0 }} 关系</span>
+              <span class="stat-item">{{ graphData.edge_count || graphData.edges?.length || 0 }} {{ $t('process.relations') }}</span>
               <span class="stat-divider">|</span>
             </template>
             <div class="action-buttons">
@@ -47,40 +47,40 @@
           <!-- 图谱可视化（只要有数据就显示） -->
           <div v-if="graphData" class="graph-view">
             <svg ref="graphSvg" class="graph-svg"></svg>
-            <!-- 构建中提示 -->
+            <!-- Building hint -->
             <div v-if="currentPhase === 1" class="graph-building-hint">
               <span class="building-dot"></span>
-              实时更新中...
+              {{ $t('process.realtimeUpdating') }}
             </div>
             
-            <!-- 节点/边详情面板 -->
+            <!-- Node/Edge detail panel -->
             <div v-if="selectedItem" class="detail-panel">
               <div class="detail-panel-header">
-                <span class="detail-title">{{ selectedItem.type === 'node' ? 'Node Details' : 'Relationship' }}</span>
+                <span class="detail-title">{{ selectedItem.type === 'node' ? $t('process.nodeDetails') : $t('process.relationship') }}</span>
                 <span v-if="selectedItem.type === 'node'" class="detail-badge" :style="{ background: selectedItem.color }">
                   {{ selectedItem.entityType }}
                 </span>
                 <button class="detail-close" @click="closeDetailPanel">×</button>
               </div>
               
-              <!-- 节点详情 -->
-              <div v-if="selectedItem.type === 'node'" class="detail-content">
-                <div class="detail-row">
-                  <span class="detail-label">Name:</span>
-                  <span class="detail-value highlight">{{ selectedItem.data.name }}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">UUID:</span>
-                  <span class="detail-value uuid">{{ selectedItem.data.uuid }}</span>
-                </div>
-                <div class="detail-row" v-if="selectedItem.data.created_at">
-                  <span class="detail-label">Created:</span>
-                  <span class="detail-value">{{ formatDate(selectedItem.data.created_at) }}</span>
-                </div>
+                <!-- Node details -->
+                <div v-if="selectedItem.type === 'node'" class="detail-content">
+                 <div class="detail-row">
+                   <span class="detail-label">{{ $t('process.name') }}</span>
+                   <span class="detail-value highlight">{{ selectedItem.data.name }}</span>
+                 </div>
+                 <div class="detail-row">
+                   <span class="detail-label">{{ $t('process.uuid') }}</span>
+                   <span class="detail-value uuid">{{ selectedItem.data.uuid }}</span>
+                 </div>
+                 <div class="detail-row" v-if="selectedItem.data.created_at">
+                   <span class="detail-label">{{ $t('process.created') }}</span>
+                   <span class="detail-value">{{ formatDate(selectedItem.data.created_at) }}</span>
+                 </div>
                 
                 <!-- Properties / Attributes -->
                 <div class="detail-section" v-if="selectedItem.data.attributes && Object.keys(selectedItem.data.attributes).length > 0">
-                  <span class="detail-label">Properties:</span>
+                  <span class="detail-label">{{ $t('process.properties') }}</span>
                   <div class="properties-list">
                     <div v-for="(value, key) in selectedItem.data.attributes" :key="key" class="property-item">
                       <span class="property-key">{{ key }}:</span>
@@ -88,16 +88,16 @@
                     </div>
                   </div>
                 </div>
-                
+
                 <!-- Summary -->
                 <div class="detail-section" v-if="selectedItem.data.summary">
-                  <span class="detail-label">Summary:</span>
+                  <span class="detail-label">{{ $t('process.summary') }}</span>
                   <p class="detail-summary">{{ selectedItem.data.summary }}</p>
                 </div>
-                
+
                 <!-- Labels -->
                 <div class="detail-row" v-if="selectedItem.data.labels?.length">
-                  <span class="detail-label">Labels:</span>
+                  <span class="detail-label">{{ $t('process.labels') }}</span>
                   <div class="detail-labels">
                     <span v-for="label in selectedItem.data.labels" :key="label" class="label-tag">{{ label }}</span>
                   </div>
@@ -121,45 +121,45 @@
                   <span class="detail-label">UUID:</span>
                   <span class="detail-value uuid">{{ selectedItem.data.uuid }}</span>
                 </div>
-                <div class="detail-row">
-                  <span class="detail-label">Label:</span>
-                  <span class="detail-value">{{ selectedItem.data.name || selectedItem.data.fact_type || 'RELATED_TO' }}</span>
-                </div>
-                <div class="detail-row" v-if="selectedItem.data.fact_type">
-                  <span class="detail-label">Type:</span>
-                  <span class="detail-value">{{ selectedItem.data.fact_type }}</span>
-                </div>
+                 <div class="detail-row">
+                   <span class="detail-label">{{ $t('process.label') }}</span>
+                   <span class="detail-value">{{ selectedItem.data.name || selectedItem.data.fact_type || 'RELATED_TO' }}</span>
+                 </div>
+                 <div class="detail-row" v-if="selectedItem.data.fact_type">
+                   <span class="detail-label">{{ $t('process.type') }}</span>
+                   <span class="detail-value">{{ selectedItem.data.fact_type }}</span>
+                 </div>
+
+                 <!-- Fact -->
+                 <div class="detail-section" v-if="selectedItem.data.fact">
+                   <span class="detail-label">{{ $t('process.fact') }}</span>
+                   <p class="detail-summary">{{ selectedItem.data.fact }}</p>
+                 </div>
+
+                 <!-- Episodes -->
+                 <div class="detail-section" v-if="selectedItem.data.episodes?.length">
+                   <span class="detail-label">{{ $t('process.episodes') }}</span>
+                   <div class="episodes-list">
+                     <span v-for="ep in selectedItem.data.episodes" :key="ep" class="episode-tag">{{ ep }}</span>
+                   </div>
+                 </div>
                 
-                <!-- Fact -->
-                <div class="detail-section" v-if="selectedItem.data.fact">
-                  <span class="detail-label">Fact:</span>
-                  <p class="detail-summary">{{ selectedItem.data.fact }}</p>
-                </div>
-                
-                <!-- Episodes -->
-                <div class="detail-section" v-if="selectedItem.data.episodes?.length">
-                  <span class="detail-label">Episodes:</span>
-                  <div class="episodes-list">
-                    <span v-for="ep in selectedItem.data.episodes" :key="ep" class="episode-tag">{{ ep }}</span>
-                  </div>
-                </div>
-                
-                <div class="detail-row" v-if="selectedItem.data.created_at">
-                  <span class="detail-label">Created:</span>
-                  <span class="detail-value">{{ formatDate(selectedItem.data.created_at) }}</span>
-                </div>
-                <div class="detail-row" v-if="selectedItem.data.valid_at">
-                  <span class="detail-label">Valid From:</span>
-                  <span class="detail-value">{{ formatDate(selectedItem.data.valid_at) }}</span>
-                </div>
-                <div class="detail-row" v-if="selectedItem.data.invalid_at">
-                  <span class="detail-label">Invalid At:</span>
-                  <span class="detail-value">{{ formatDate(selectedItem.data.invalid_at) }}</span>
-                </div>
-                <div class="detail-row" v-if="selectedItem.data.expired_at">
-                  <span class="detail-label">Expired At:</span>
-                  <span class="detail-value">{{ formatDate(selectedItem.data.expired_at) }}</span>
-                </div>
+                 <div class="detail-row" v-if="selectedItem.data.created_at">
+                   <span class="detail-label">{{ $t('process.createdAt') }}</span>
+                   <span class="detail-value">{{ formatDate(selectedItem.data.created_at) }}</span>
+                 </div>
+                 <div class="detail-row" v-if="selectedItem.data.valid_at">
+                   <span class="detail-label">{{ $t('process.validFrom') }}</span>
+                   <span class="detail-value">{{ formatDate(selectedItem.data.valid_at) }}</span>
+                 </div>
+                 <div class="detail-row" v-if="selectedItem.data.invalid_at">
+                   <span class="detail-label">{{ $t('process.invalidAt') }}</span>
+                   <span class="detail-value">{{ formatDate(selectedItem.data.invalid_at) }}</span>
+                 </div>
+                 <div class="detail-row" v-if="selectedItem.data.expired_at">
+                   <span class="detail-label">{{ $t('process.expiredAt') }}</span>
+                   <span class="detail-value">{{ formatDate(selectedItem.data.expired_at) }}</span>
+                 </div>
               </div>
             </div>
           </div>
@@ -414,36 +414,38 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import * as d3 from 'd3'
 
 const route = useRoute()
 const router = useRouter()
+const { t } = useI18n()
 
-// 当前项目ID（可能从'new'变为实际ID）
+// Current project ID (may change from 'new' to actual ID)
 const currentProjectId = ref(route.params.projectId)
 
-// 状态
+// State
 const loading = ref(true)
 const graphLoading = ref(false)
 const error = ref('')
 const projectData = ref(null)
 const graphData = ref(null)
 const buildProgress = ref(null)
-const ontologyProgress = ref(null) // 本体生成进度
-const currentPhase = ref(-1) // -1: 上传中, 0: 本体生成中, 1: 图谱构建, 2: 完成
-const selectedItem = ref(null) // 选中的节点或边
+const ontologyProgress = ref(null) // Ontology generation progress
+const currentPhase = ref(-1) // -1: uploading, 0: ontology generating, 1: graph building, 2: completed
+const selectedItem = ref(null) // Selected node or edge
 const isFullScreen = ref(false)
 
-// DOM引用
+// DOM references
 const graphContainer = ref(null)
 const graphSvg = ref(null)
 
-// 轮询定时器
+// Polling timer
 let pollTimer = null
 
-// 计算属性
+// Computed properties
 const statusClass = computed(() => {
   if (error.value) return 'error'
   if (currentPhase.value >= 2) return 'completed'
@@ -451,11 +453,11 @@ const statusClass = computed(() => {
 })
 
 const statusText = computed(() => {
-  if (error.value) return '构建失败'
-  if (currentPhase.value >= 2) return '构建完成'
-  if (currentPhase.value === 1) return '图谱构建中'
-  if (currentPhase.value === 0) return '本体生成中'
-  return '初始化中'
+  if (error.value) return t('process.statusFailed')
+  if (currentPhase.value >= 2) return t('process.statusCompleted')
+  if (currentPhase.value === 1) return t('process.statusBuilding')
+  if (currentPhase.value === 0) return t('process.statusWaiting')
+  return t('process.statusReady')
 })
 
 const entityTypes = computed(() => {
@@ -481,8 +483,8 @@ const goHome = () => {
 }
 
 const goToNextStep = () => {
-  // TODO: 进入环境搭建步骤
-  alert('环境搭建功能开发中...')
+  // TODO: Enter environment setup step
+  alert('Environment setup feature under development...')
 }
 
 const toggleFullScreen = () => {
@@ -493,12 +495,12 @@ const toggleFullScreen = () => {
   }, 350) 
 }
 
-// 关闭详情面板
+// Close detail panel
 const closeDetailPanel = () => {
   selectedItem.value = null
 }
 
-// 格式化日期
+// Format date
 const formatDate = (dateStr) => {
   if (!dateStr) return '-'
   try {
