@@ -119,7 +119,7 @@ cp .env.example .env
 # 推荐使用阿里百炼平台qwen-plus模型：https://bailian.console.aliyun.com/
 # 注意消耗较大，可先进行小于40轮的模拟尝试
 LLM_API_KEY=your_api_key
-LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+LLM_BASE_URL=https://openrouter.ai/api/v1
 LLM_MODEL_NAME=qwen-plus
 
 # Zep Cloud 配置

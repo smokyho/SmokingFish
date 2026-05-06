@@ -332,15 +332,15 @@ def get_report_by_simulation(simulation_id: str):
     """
     try:
         report = ReportManager.get_report_by_simulation(simulation_id)
-        
+
         if not report:
             return jsonify({
                 "success": False,
                 "error": t('api.noReportForSim', id=simulation_id),
                 "has_report": False
             }), 404
-        
-return jsonify({
+
+        return jsonify({
             "success": True,
             "data": report.to_dict(),
             "has_report": True

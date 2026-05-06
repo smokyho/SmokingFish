@@ -119,7 +119,7 @@ cp .env.example .env
 # Recommended: Alibaba Qwen-plus model via Bailian Platform: https://bailian.console.aliyun.com/
 # High consumption, try simulations with fewer than 40 rounds first
 LLM_API_KEY=your_api_key
-LLM_BASE_URL=https://dashscope.aliyuncs.com/compatible-mode/v1
+LLM_BASE_URL=https://openrouter.ai/api/v1
 LLM_MODEL_NAME=qwen-plus
 
 # Zep Cloud Configuration
